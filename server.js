@@ -9,6 +9,11 @@ app.use(express.json())
 connectDB()
 
 
+// Routes
+app.use("/api/admin", require("./routes/adminRoutes"))
+app.use("/api/product", require("./routes/productRoutes"))
+
+
 app.listen(process.env.PORT || 4000, () => {
     console.log(`Server is running on port ${process.env.PORT}`)
 })
