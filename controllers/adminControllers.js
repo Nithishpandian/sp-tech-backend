@@ -47,7 +47,7 @@ const loginAdmin = async (req, res) => {
     });
   } else {
     res.status(400);
-    throw new Error("Invalid Credentials");
+    console.log("Invalid data");
   }
 };
 

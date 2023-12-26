@@ -8,6 +8,8 @@ app.use(cors())
 app.use(express.json())
 connectDB()
 
+app.use('/image', express.static('images'));
+
 
 // Routes
 app.use("/api/admin", require("./routes/adminRoutes"))
