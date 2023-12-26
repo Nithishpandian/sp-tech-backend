@@ -1,4 +1,5 @@
 const Product = require("../models/ProductModel");
+const fs = require("fs");
 
 // @desc    get products
 // @route   GET /api/getproducts
@@ -17,12 +18,12 @@ const getProduct = async (req, res) => {
 // @access  private
 const setProduct = async (req, res) => {
   try {
-    const productImage = req.filename
+    const productImage = req.filename;
     const { productName, productDescription } = req.body;
     const product = new Product({
       productName,
       productDescription,
-      productImage
+      productImage,
     });
     await product.save();
     res.status(201).json(product);
@@ -31,4 +32,16 @@ const setProduct = async (req, res) => {
   }
 };
 
-module.exports = { getProduct, setProduct };
+const deleteProduct = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    console.log(deletedProduct);
+    fs.unlinkSync(`images/${deletedProduct.productImage}`);
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getProduct, setProduct, deleteProduct };
