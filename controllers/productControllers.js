@@ -1,5 +1,5 @@
 const Product = require("../models/ProductModel");
-const fs = require("fs");
+const cloudinary = require("../config/cloudinary");
 
 // @desc    get products
 // @route   GET /api/getproducts
@@ -18,12 +18,17 @@ const getProduct = async (req, res) => {
 // @access  private
 const setProduct = async (req, res) => {
   try {
-    const productImage = req.filename;
     const { productName, productDescription } = req.body;
+    const result = await cloudinary.uploader.upload(req.body.productImage, {
+      folder: "uploads",
+    });
     const product = new Product({
       productName,
       productDescription,
-      productImage,
+      productImage: {
+        public_id: result.public_id,
+        url: result.secure_url,
+      },
     });
     await product.save();
     res.status(201).json(product);
@@ -37,7 +42,6 @@ const deleteProduct = async (req, res) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(id);
     console.log(deletedProduct);
-    fs.unlinkSync(`images/${deletedProduct.productImage}`);
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
